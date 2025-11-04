@@ -166,14 +166,14 @@ p {
 .binder-tabs__tab {
   --tab-color: #4caf50;
   --tab-text-color: #0d0d0d;
-  flex: 0 0 clamp(110px, 28vw, 180px);
+  flex: 0 0 clamp(90px, 22vw, 140px);
   position: relative;
   border: none;
   border-radius: 16px 16px 6px 6px;
   background: var(--tab-color);
   background: linear-gradient(160deg, var(--tab-color), color-mix(in srgb, var(--tab-color) 65%, #1b1b1b));
   color: var(--tab-text-color);
-  padding: 12px 16px 10px;
+  padding: 10px 12px 8px;
   text-align: left;
   font-weight: 600;
   font-size: clamp(0.9rem, 0.35vw + 0.84rem, 1rem);
