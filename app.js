@@ -739,7 +739,11 @@ function showChangePasswordSuccess(message) {
 }
 
 function openChangePasswordModal() {
-  if (!elements.changePasswordModal) return;
+  console.log('Opening change password modal', elements.changePasswordModal);
+  if (!elements.changePasswordModal) {
+    console.error('Change password modal not found');
+    return;
+  }
   elements.changePasswordForm.reset();
   hideChangePasswordError();
   if (typeof elements.changePasswordModal.showModal === 'function') {
