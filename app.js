@@ -1,4 +1,4 @@
-import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser } from './auth.js';
+import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser, resetPassword } from './auth.js';
 import { loadGoals, createGoal as createGoalDb, updateGoal as updateGoalDb, deleteGoal as deleteGoalDb } from './database.js';
 
 const statusLabels = {
@@ -25,6 +25,7 @@ const elements = {
   authError: document.getElementById("auth-error"),
   authToggleBtn: document.getElementById("auth-toggle-btn"),
   authToggleText: document.getElementById("auth-toggle-text"),
+  forgotPasswordBtn: document.getElementById("forgot-password-btn"),
   userEmail: document.getElementById("user-email"),
   logoutBtn: document.getElementById("logout-btn"),
   goalForm: document.getElementById("goal-form"),
@@ -142,6 +143,34 @@ async function handleLogout() {
   if (error) {
     alert('Der opstod en fejl ved logout');
     console.error('Logout error:', error);
+  }
+}
+
+async function handleForgotPassword() {
+  const email = elements.authEmail.value.trim();
+
+  if (!email) {
+    showAuthError('Indtast din email-adresse for at nulstille adgangskoden');
+    return;
+  }
+
+  elements.forgotPasswordBtn.disabled = true;
+  elements.forgotPasswordBtn.textContent = 'Sender...';
+
+  try {
+    const { error } = await resetPassword(email);
+    if (error) {
+      showAuthError('Der opstod en fejl. Prøv igen.');
+      console.error('Password reset error:', error);
+    } else {
+      showAuthSuccess(`Nulstillingslink er sendt til ${email}`);
+    }
+  } catch (error) {
+    showAuthError('Der opstod en uventet fejl');
+    console.error('Password reset error:', error);
+  } finally {
+    elements.forgotPasswordBtn.disabled = false;
+    elements.forgotPasswordBtn.textContent = 'Glemt adgangskode?';
   }
 }
 
@@ -614,6 +643,9 @@ async function init() {
   }
   if (elements.authToggleBtn) {
     elements.authToggleBtn.addEventListener("click", toggleAuthMode);
+  }
+  if (elements.forgotPasswordBtn) {
+    elements.forgotPasswordBtn.addEventListener("click", handleForgotPassword);
   }
   if (elements.logoutBtn) {
     elements.logoutBtn.addEventListener("click", handleLogout);

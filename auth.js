@@ -34,3 +34,10 @@ export function onAuthStateChange(callback) {
   });
   return subscription;
 }
+
+export async function resetPassword(email) {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin,
+  });
+  return { data, error };
+}

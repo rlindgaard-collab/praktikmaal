@@ -68,6 +68,26 @@
   color: var(--color-text);
 }
 
+.auth-forgot {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.auth-forgot button {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  text-decoration: none;
+}
+
+.auth-forgot button:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
 .user-info {
   display: flex;
   align-items: center;
