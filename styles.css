@@ -672,9 +672,10 @@ p {
   }
 
   .binder-tabs__tab {
-    flex: 0 0 72%;
+    flex: 0 0 calc(33.333% - 4px);
     border-radius: 18px 18px 8px 8px;
-    padding: 10px 14px 8px;
+    padding: 8px 10px 6px;
+    font-size: 0.8rem;
   }
 
   .primary-button,
