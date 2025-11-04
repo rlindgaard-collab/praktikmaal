@@ -3,24 +3,6 @@
   margin: 0 auto;
 }
 
-.supervisor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.supervisor-header .header-left {
-  flex: 1;
-  min-width: 0;
-}
-
-.supervisor-header h1 {
-  margin: 0;
-  font-size: clamp(1.3rem, 1vw + 1.2rem, 1.75rem);
-}
-
 .supervisor-content {
   display: flex;
   flex-direction: column;
