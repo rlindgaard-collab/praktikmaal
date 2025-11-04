@@ -244,20 +244,22 @@
             <h3 class="goal-title"></h3>
             <p class="goal-description"></p>
           </div>
-          <span class="status-chip" data-status=""></span>
         </div>
 
         <div class="goal-body">
-          <div class="status-selector" role="group" aria-label="Status">
-            <button type="button" class="status-circle" data-status="red" title="Rød">
-              <span class="visually-hidden">Rød</span>
-            </button>
-            <button type="button" class="status-circle" data-status="yellow" title="Gul">
-              <span class="visually-hidden">Gul</span>
-            </button>
-            <button type="button" class="status-circle" data-status="green" title="Grøn">
-              <span class="visually-hidden">Grøn</span>
-            </button>
+          <div class="progress-container">
+            <label class="progress-label">
+              <span class="progress-label-text">Fremskridt</span>
+              <span class="progress-percentage">0%</span>
+            </label>
+            <input
+              type="range"
+              class="progress-slider"
+              min="0"
+              max="100"
+              value="0"
+              aria-label="Fremskridt i procent"
+            />
           </div>
 
           <label class="field field--reflection">
@@ -365,6 +367,21 @@
             </label>
           </div>
         </label>
+        <div class="progress-container">
+          <label class="progress-label">
+            <span class="progress-label-text">Fremskridt</span>
+            <span class="progress-percentage-edit">0%</span>
+          </label>
+          <input
+            type="range"
+            class="progress-slider"
+            name="edit-progress"
+            min="0"
+            max="100"
+            value="0"
+            aria-label="Fremskridt i procent"
+          />
+        </div>
         <label class="field">
           <span>Opdater PDF</span>
           <input type="file" name="edit-file" accept="application/pdf" />

@@ -1,11 +1,11 @@
 import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser, resetPassword, updatePassword } from './auth.js';
 import { loadGoals, createGoal as createGoalDb, updateGoal as updateGoalDb, deleteGoal as deleteGoalDb } from './database.js';
 
-const statusLabels = {
-  red: "Rød",
-  yellow: "Gul",
-  green: "Grøn",
-};
+function getProgressColor(progress) {
+  if (progress <= 25) return '#EF5350';
+  if (progress <= 75) return '#FFCA28';
+  return '#4CAF50';
+}
 
 const DEFAULT_COLOR = "#66BB6A";
 
@@ -434,13 +434,15 @@ function readFileAsDataUrl(file) {
   });
 }
 
-function setStatusUI(statusChip, buttons, status) {
-  statusChip.dataset.status = status;
-  statusChip.textContent = statusLabels[status] || "Ukendt";
+function updateSliderColor(slider, progress) {
+  const color = getProgressColor(progress);
+  slider.style.setProperty('--slider-fill-color', color);
+  slider.style.setProperty('--slider-fill-percent', `${progress}%`);
 
-  buttons.forEach((btn) => {
-    btn.classList.toggle("is-active", btn.dataset.status === status);
-  });
+  const percentage = slider.parentElement.querySelector('.progress-percentage, .progress-percentage-edit');
+  if (percentage) {
+    percentage.style.color = color;
+  }
 }
 
 function setFileUI(container, missingMessage, pdf) {
@@ -494,8 +496,8 @@ function renderGoals() {
   const article = fragment.querySelector(".card--goal");
   const titleEl = article.querySelector(".goal-title");
   const descriptionEl = article.querySelector(".goal-description");
-  const statusChip = article.querySelector(".status-chip");
-  const statusButtons = article.querySelectorAll(".status-selector button");
+  const progressSlider = article.querySelector(".progress-slider");
+  const progressPercentage = article.querySelector(".progress-percentage");
   const reflectionField = article.querySelector(".field--reflection textarea");
   const fileContainer = article.querySelector(".goal-file");
   const missingFile = article.querySelector(".goal-file--missing");
@@ -515,15 +517,22 @@ function renderGoals() {
       ? activeGoal.reflection
       : "";
 
-  setStatusUI(statusChip, statusButtons, activeGoal.status);
+  const progress = activeGoal.progress !== undefined ? activeGoal.progress : 0;
+  progressSlider.value = progress;
+  progressPercentage.textContent = `${progress}%`;
+  updateSliderColor(progressSlider, progress);
+
   setFileUI(fileContainer, missingFile, activeGoal.pdf);
 
-  statusButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const newStatus = btn.dataset.status;
-      if (!newStatus) return;
-      updateGoalLocal(activeGoal.id, { status: newStatus });
-    });
+  progressSlider.addEventListener("input", (event) => {
+    const newProgress = parseInt(event.target.value);
+    progressPercentage.textContent = `${newProgress}%`;
+    updateSliderColor(progressSlider, newProgress);
+  });
+
+  progressSlider.addEventListener("change", (event) => {
+    const newProgress = parseInt(event.target.value);
+    updateGoalLocal(activeGoal.id, { progress: newProgress });
   });
 
   reflectionField.addEventListener("input", (event) => {
@@ -649,7 +658,7 @@ async function handleFormSubmit(event) {
     }
   }
 
-  await createGoalLocal({ title, description, pdf, color });
+  await createGoalLocal({ title, description, pdf, color, progress: 0 });
   elements.goalForm.reset();
   setSelectedColor(elements.goalForm, "color", color);
   elements.goalFile.value = "";
@@ -662,6 +671,26 @@ function openEditor(goalId) {
   editorControls.title.value = goal.title;
   editorControls.description.value = goal.description || "";
   setSelectedColor(editorForm, "edit-color", goal.color || DEFAULT_COLOR);
+
+  const progress = goal.progress !== undefined ? goal.progress : 0;
+  const progressSlider = elements.goalEditor.querySelector('.progress-slider');
+  const progressPercentage = elements.goalEditor.querySelector('.progress-percentage-edit');
+
+  if (progressSlider) {
+    progressSlider.value = progress;
+    updateSliderColor(progressSlider, progress);
+
+    progressSlider.oninput = function(e) {
+      const value = parseInt(e.target.value);
+      progressPercentage.textContent = `${value}%`;
+      updateSliderColor(progressSlider, value);
+    };
+  }
+
+  if (progressPercentage) {
+    progressPercentage.textContent = `${progress}%`;
+  }
+
   editorControls.file.value = "";
   if (typeof elements.goalEditor.showModal === "function") {
     elements.goalEditor.showModal();
@@ -716,10 +745,14 @@ async function handleEditorSubmit(event) {
     }
   }
 
+  const progressSlider = elements.goalEditor.querySelector('.progress-slider');
+  const progress = progressSlider ? parseInt(progressSlider.value) : 0;
+
   const updates = {
     title,
     description,
     color,
+    progress,
   };
 
   if (pdfPayload) {
