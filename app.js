@@ -710,6 +710,9 @@ async function clearAllGoals() {
 }
 
 async function init() {
+  // Set up auth state listener FIRST to catch PASSWORD_RECOVERY events
+  onAuthStateChange(handleAuthStateChange);
+
   const { user } = await getCurrentUser();
   if (user) {
     currentUser = user;
@@ -719,8 +722,6 @@ async function init() {
   } else {
     showAuthView();
   }
-
-  onAuthStateChange(handleAuthStateChange);
 
   if (elements.authForm) {
     elements.authForm.addEventListener("submit", handleAuthSubmit);
