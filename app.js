@@ -528,11 +528,15 @@ function renderGoals() {
     const newProgress = parseInt(event.target.value);
     progressPercentage.textContent = `${newProgress}%`;
     updateSliderColor(progressSlider, newProgress);
+
+    goals = goals.map((goal) =>
+      goal.id === activeGoal.id ? { ...goal, progress: newProgress } : goal
+    );
   });
 
   progressSlider.addEventListener("change", (event) => {
     const newProgress = parseInt(event.target.value);
-    updateGoalLocal(activeGoal.id, { progress: newProgress });
+    updateGoalLocal(activeGoal.id, { progress: newProgress }, true);
   });
 
   reflectionField.addEventListener("input", (event) => {
