@@ -15,7 +15,7 @@ export async function loadGoals() {
     id: goal.id,
     title: goal.title,
     description: goal.description,
-    status: goal.status,
+    progress: goal.progress !== undefined ? goal.progress : 0,
     reflection: goal.reflection,
     pdf: goal.pdf_data ? {
       name: goal.pdf_name,
@@ -40,7 +40,7 @@ export async function createGoal(goalData) {
     user_id: user.id,
     title: goalData.title,
     description: goalData.description || '',
-    status: 'red',
+    progress: goalData.progress !== undefined ? goalData.progress : 0,
     reflection: '',
     pdf_name: goalData.pdf?.name || null,
     pdf_data: goalData.pdf?.dataUrl || null,
@@ -64,7 +64,7 @@ export async function createGoal(goalData) {
     id: data.id,
     title: data.title,
     description: data.description,
-    status: data.status,
+    progress: data.progress !== undefined ? data.progress : 0,
     reflection: data.reflection,
     pdf: data.pdf_data ? {
       name: data.pdf_name,
@@ -83,7 +83,7 @@ export async function updateGoal(id, updates) {
 
   if (updates.title !== undefined) dbUpdates.title = updates.title;
   if (updates.description !== undefined) dbUpdates.description = updates.description;
-  if (updates.status !== undefined) dbUpdates.status = updates.status;
+  if (updates.progress !== undefined) dbUpdates.progress = updates.progress;
   if (updates.reflection !== undefined) dbUpdates.reflection = updates.reflection;
   if (updates.color !== undefined) dbUpdates.color = updates.color;
 
@@ -119,7 +119,7 @@ export async function updateGoal(id, updates) {
     id: data.id,
     title: data.title,
     description: data.description,
-    status: data.status,
+    progress: data.progress !== undefined ? data.progress : 0,
     reflection: data.reflection,
     pdf: data.pdf_data ? {
       name: data.pdf_name,
