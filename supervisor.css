@@ -1,0 +1,215 @@
+.supervisor-view {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.supervisor-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.loading-state {
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+  margin: 48px 0;
+}
+
+.user-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: border-color 0.2s ease;
+}
+
+.user-card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.user-info h2 {
+  margin: 0 0 4px 0;
+  font-size: clamp(1.1rem, 0.5vw + 1rem, 1.3rem);
+  color: var(--color-text);
+}
+
+.user-email {
+  color: var(--color-text-muted);
+  font-size: clamp(0.9rem, 0.2vw + 0.85rem, 1rem);
+}
+
+.goals-count {
+  color: var(--color-text-muted);
+  font-size: clamp(0.85rem, 0.2vw + 0.8rem, 0.95rem);
+  font-weight: 500;
+}
+
+.user-goals {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.goal-item {
+  background: color-mix(in srgb, var(--color-surface) 50%, transparent);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.goal-item:hover {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.goal-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.goal-item-title {
+  font-size: clamp(1rem, 0.3vw + 0.95rem, 1.15rem);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  flex: 1;
+}
+
+.goal-item-progress {
+  font-weight: 600;
+  font-size: clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.goal-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.goal-progress-fill {
+  height: 100%;
+  background: color-mix(in srgb, var(--goal-color) 40%, var(--color-surface));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.goal-item-description {
+  color: var(--color-text-muted);
+  font-size: clamp(0.9rem, 0.2vw + 0.85rem, 1rem);
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+.goal-details {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  display: none;
+}
+
+.goal-details.is-expanded {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.goal-detail-section {
+  margin-bottom: 16px;
+}
+
+.goal-detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.goal-detail-label {
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 6px;
+  font-size: clamp(0.9rem, 0.2vw + 0.85rem, 1rem);
+}
+
+.goal-detail-content {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-size: clamp(0.9rem, 0.2vw + 0.85rem, 1rem);
+}
+
+.goal-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-accent);
+  text-decoration: none;
+  font-size: clamp(0.9rem, 0.2vw + 0.85rem, 1rem);
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.goal-file-link:hover {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+.no-goals-message {
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+  padding: 24px;
+}
+
+.expand-indicator {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-top: 8px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .user-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .goal-item-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .goal-item-progress {
+    align-self: flex-start;
+  }
+}

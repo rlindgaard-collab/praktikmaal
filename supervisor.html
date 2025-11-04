@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vejleder Oversigt - Praktikmål</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./supervisor.css" />
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <header class="app-header">
+        <h1>Vejleder Oversigt</h1>
+        <div class="header-actions">
+          <button id="logout-supervisor" class="ghost-button" type="button">
+            Log ud
+          </button>
+        </div>
+      </header>
+
+      <main class="app-content supervisor-view">
+        <div id="supervisor-content" class="supervisor-content">
+          <p class="loading-state">Indlæser brugeroversigt...</p>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="./supervisor.js"></script>
+  </body>
+</html>

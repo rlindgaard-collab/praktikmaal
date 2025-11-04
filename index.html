@@ -9,6 +9,10 @@
   </head>
   <body>
     <div id="auth-view" class="auth-container">
+      <button id="supervisor-login-btn" class="supervisor-login-btn" type="button" title="Vejleder login">
+        👤
+      </button>
+
       <div class="auth-card">
         <h1>Praktikmål Tracker</h1>
         <p>Log ind for at se dine praktikmål</p>
@@ -56,6 +60,32 @@
         </div>
       </div>
     </div>
+
+    <dialog id="supervisor-modal" class="modal">
+      <div class="modal__content">
+        <div class="modal__header">
+          <h2>Vejleder Login</h2>
+          <button id="close-supervisor-modal" class="ghost-button" type="button">✕</button>
+        </div>
+        <div id="supervisor-error" class="auth-error"></div>
+        <form id="supervisor-form" class="auth-form">
+          <label class="field">
+            <span>Vejlederkode</span>
+            <input
+              type="password"
+              id="supervisor-code"
+              name="code"
+              required
+              placeholder="Indtast vejlederkode"
+              autocomplete="off"
+            />
+          </label>
+          <button type="submit" class="primary-button">
+            Log ind som vejleder
+          </button>
+        </form>
+      </div>
+    </dialog>
 
     <div id="reset-password-view" class="auth-container" style="display: none;">
       <div class="auth-card">

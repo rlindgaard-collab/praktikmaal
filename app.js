@@ -1,4 +1,4 @@
-import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser, resetPassword, updatePassword } from './auth.js';
+import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser, resetPassword, updatePassword, verifySupervisorCode, createSupervisorSession } from './auth.js';
 import { loadGoals, createGoal as createGoalDb, updateGoal as updateGoalDb, deleteGoal as deleteGoalDb } from './database.js';
 
 function getProgressColor(progress) {
@@ -52,6 +52,12 @@ const elements = {
   goalTemplate: document.getElementById("goal-template"),
   goalEditor: document.getElementById("goal-editor"),
   binderTabs: document.getElementById("binder-tabs"),
+  supervisorLoginBtn: document.getElementById("supervisor-login-btn"),
+  supervisorModal: document.getElementById("supervisor-modal"),
+  supervisorForm: document.getElementById("supervisor-form"),
+  supervisorCode: document.getElementById("supervisor-code"),
+  supervisorError: document.getElementById("supervisor-error"),
+  closeSupervisorModal: document.getElementById("close-supervisor-modal"),
 };
 
 const editorForm = elements.goalEditor
@@ -789,6 +795,92 @@ function showChangePasswordSuccess(message) {
   elements.changePasswordError.classList.add('is-visible');
 }
 
+function openSupervisorModal() {
+  if (elements.supervisorModal) {
+    elements.supervisorModal.showModal();
+    if (elements.supervisorCode) {
+      elements.supervisorCode.value = '';
+      elements.supervisorCode.focus();
+    }
+    hideSupervisorError();
+  }
+}
+
+function closeSupervisorModal() {
+  if (elements.supervisorModal) {
+    elements.supervisorModal.close();
+    if (elements.supervisorForm) {
+      elements.supervisorForm.reset();
+    }
+    hideSupervisorError();
+  }
+}
+
+function showSupervisorError(message) {
+  if (elements.supervisorError) {
+    elements.supervisorError.textContent = message;
+    elements.supervisorError.classList.add('is-visible');
+  }
+}
+
+function hideSupervisorError() {
+  if (elements.supervisorError) {
+    elements.supervisorError.textContent = '';
+    elements.supervisorError.classList.remove('is-visible');
+  }
+}
+
+async function handleSupervisorLogin(e) {
+  e.preventDefault();
+  hideSupervisorError();
+
+  const code = elements.supervisorCode?.value.trim();
+
+  if (!code) {
+    showSupervisorError('Indtast venligst en vejlederkode');
+    return;
+  }
+
+  try {
+    const { isValid } = await verifySupervisorCode(code);
+
+    if (!isValid) {
+      showSupervisorError('Ugyldig vejlederkode');
+      return;
+    }
+
+    if (!currentUser) {
+      const tempEmail = `supervisor_${Date.now()}@temp.local`;
+      const tempPassword = `temp_${Math.random().toString(36).slice(2)}`;
+
+      const { data: signUpData, error: signUpError } = await signUp(tempEmail, tempPassword);
+
+      if (signUpError) {
+        showSupervisorError('Der opstod en fejl ved oprettelse af session');
+        console.error('Supervisor signup error:', signUpError);
+        return;
+      }
+
+      currentUser = signUpData.user;
+    }
+
+    const { error: sessionError } = await createSupervisorSession(currentUser.id);
+
+    if (sessionError) {
+      showSupervisorError('Der opstod en fejl ved oprettelse af vejledersession');
+      console.error('Supervisor session error:', sessionError);
+      return;
+    }
+
+    closeSupervisorModal();
+    window.location.href = '/supervisor.html';
+
+  } catch (error) {
+    console.error('Supervisor login error:', error);
+    showSupervisorError('Der opstod en uventet fejl');
+  }
+}
+
 function openChangePasswordModal() {
   console.log('Opening change password modal', elements.changePasswordModal);
   if (!elements.changePasswordModal) {
@@ -953,6 +1045,21 @@ function setupEventListeners() {
     elements.goalEditor.addEventListener("cancel", (event) => {
       event.preventDefault();
       closeEditor();
+    });
+  }
+  if (elements.supervisorLoginBtn) {
+    elements.supervisorLoginBtn.addEventListener("click", openSupervisorModal);
+  }
+  if (elements.closeSupervisorModal) {
+    elements.closeSupervisorModal.addEventListener("click", closeSupervisorModal);
+  }
+  if (elements.supervisorForm) {
+    elements.supervisorForm.addEventListener("submit", handleSupervisorLogin);
+  }
+  if (elements.supervisorModal) {
+    elements.supervisorModal.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeSupervisorModal();
     });
   }
 }
