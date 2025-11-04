@@ -607,6 +607,33 @@ details[open] .form-toggle-icon {
   border-radius: var(--radius-md);
   padding: 0;
   background: transparent;
+  position: relative;
+}
+
+.modal__close-corner {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.modal__close-corner:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+  transform: scale(1.05);
 }
 
 .modal::backdrop {

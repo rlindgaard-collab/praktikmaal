@@ -62,10 +62,15 @@
     </div>
 
     <dialog id="supervisor-modal" class="modal">
+      <button id="close-supervisor-modal" class="modal__close-corner" type="button" title="Luk">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
       <div class="modal__content">
         <div class="modal__header">
           <h2>Vejleder Login</h2>
-          <button id="close-supervisor-modal" class="ghost-button" type="button">✕</button>
         </div>
         <div id="supervisor-error" class="auth-error"></div>
         <form id="supervisor-form" class="auth-form">
