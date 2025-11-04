@@ -49,7 +49,6 @@ const elements = {
   goalFile: document.getElementById("goal-file"),
   goalList: document.getElementById("goal-list"),
   emptyState: document.querySelector(".empty-state"),
-  clearAll: document.getElementById("clear-all"),
   goalTemplate: document.getElementById("goal-template"),
   goalEditor: document.getElementById("goal-editor"),
   binderTabs: document.getElementById("binder-tabs"),
@@ -770,24 +769,6 @@ async function handleEditorSubmit(event) {
 }
 
 
-async function clearAllGoals() {
-  if (!goals.length) return;
-  const confirmed = confirm(
-    "Dette sletter alle praktikmål permanent. Fortsæt?"
-  );
-  if (!confirmed) return;
-
-  try {
-    await Promise.all(goals.map(goal => deleteGoalDb(goal.id)));
-    goals = [];
-    activeGoalId = null;
-    renderGoals();
-  } catch (error) {
-    console.error('Error clearing goals:', error);
-    alert('Der opstod en fejl ved sletning af alle mål');
-  }
-}
-
 function showChangePasswordError(message) {
   elements.changePasswordError.textContent = message;
   elements.changePasswordError.style.background = 'rgba(239, 83, 80, 0.15)';
@@ -960,9 +941,6 @@ function setupEventListeners() {
   }
   if (elements.goalForm) {
     elements.goalForm.addEventListener("submit", handleFormSubmit);
-  }
-  if (elements.clearAll) {
-    elements.clearAll.addEventListener("click", clearAllGoals);
   }
 
   if (editorControls.close) {
