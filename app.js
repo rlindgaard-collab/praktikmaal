@@ -859,8 +859,14 @@ async function init() {
   if (elements.resetPasswordForm) {
     elements.resetPasswordForm.addEventListener("submit", handleResetPasswordSubmit);
   }
+  console.log('Change password button:', elements.changePasswordBtn);
+  console.log('Change password modal:', elements.changePasswordModal);
+
   if (elements.changePasswordBtn) {
+    console.log('Adding event listener to change password button');
     elements.changePasswordBtn.addEventListener("click", openChangePasswordModal);
+  } else {
+    console.error('Change password button not found!');
   }
   if (elements.changePasswordClose) {
     elements.changePasswordClose.addEventListener("click", closeChangePasswordModal);
