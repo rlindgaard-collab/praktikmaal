@@ -502,8 +502,8 @@ p {
   width: 24px;
   height: 24px;
   border: none;
-  background: var(--color-danger);
-  color: white;
+  background: rgba(239, 83, 80, 0.3);
+  color: var(--color-danger);
   border-radius: 50%;
   cursor: pointer;
   font-size: 18px;
@@ -516,7 +516,7 @@ p {
 }
 
 .remove-file-btn:hover {
-  background: #d32f2f;
+  background: rgba(239, 83, 80, 0.5);
   transform: scale(1.1);
 }
 
