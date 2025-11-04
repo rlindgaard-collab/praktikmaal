@@ -185,11 +185,12 @@ p {
   font-weight: 600;
   font-size: clamp(0.85rem, 0.3vw + 0.8rem, 0.95rem);
   cursor: pointer;
-  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.35);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
   scroll-snap-align: start;
   white-space: nowrap;
   line-height: 1.15;
+  transform: translateY(4px);
 }
 
 .binder-tabs__tab::after {
@@ -205,8 +206,9 @@ p {
 .binder-tabs__tab.is-active,
 .binder-tabs__tab:focus-visible {
   outline: none;
-  transform: translateY(-4px);
-  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.45);
+  transform: translateY(0);
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.45);
+  background: color-mix(in srgb, var(--tab-color) 45%, var(--color-surface));
 }
 
 .binder-tabs__tab.is-active::after {
@@ -215,6 +217,11 @@ p {
 
 .binder-tabs__tab:focus-visible {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2), 0 18px 32px rgba(0, 0, 0, 0.45);
+}
+
+.binder-tabs__tab:not(.is-active):hover {
+  transform: translateY(2px);
+  background: color-mix(in srgb, var(--tab-color) 35%, var(--color-surface));
 }
 
 .binder-tabs__label {
