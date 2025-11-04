@@ -106,6 +106,9 @@
         </div>
         <div id="user-info" class="user-info">
           <span class="user-info__email" id="user-email"></span>
+          <button id="change-password-btn" class="ghost-button" type="button">
+            Skift adgangskode
+          </button>
           <button id="logout-btn" class="ghost-button user-info__logout" type="button">
             Log ud
           </button>
@@ -362,6 +365,60 @@
         </label>
         <footer class="modal__footer">
           <button type="submit" class="primary-button">Gem ændringer</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="change-password-modal" class="modal">
+      <form method="dialog" class="modal__content" id="change-password-form">
+        <header class="modal__header">
+          <h2>Skift adgangskode</h2>
+          <button type="button" class="ghost-button modal__close" id="change-password-close">Luk</button>
+        </header>
+
+        <div id="change-password-error" class="auth-error"></div>
+
+        <label class="field">
+          <span>Nuværende adgangskode</span>
+          <input
+            type="password"
+            id="current-password"
+            name="current-password"
+            required
+            placeholder="Indtast nuværende adgangskode"
+            minlength="6"
+            autocomplete="current-password"
+          />
+        </label>
+
+        <label class="field">
+          <span>Ny adgangskode</span>
+          <input
+            type="password"
+            id="new-password"
+            name="new-password"
+            required
+            placeholder="Min. 6 tegn"
+            minlength="6"
+            autocomplete="new-password"
+          />
+        </label>
+
+        <label class="field">
+          <span>Bekræft ny adgangskode</span>
+          <input
+            type="password"
+            id="confirm-new-password"
+            name="confirm-new-password"
+            required
+            placeholder="Min. 6 tegn"
+            minlength="6"
+            autocomplete="new-password"
+          />
+        </label>
+
+        <footer class="modal__footer">
+          <button type="submit" class="primary-button" id="change-password-submit">Skift adgangskode</button>
         </footer>
       </form>
     </dialog>

@@ -33,7 +33,16 @@ const elements = {
   resetSubmit: document.getElementById("reset-submit"),
   resetError: document.getElementById("reset-error"),
   userEmail: document.getElementById("user-email"),
+  changePasswordBtn: document.getElementById("change-password-btn"),
   logoutBtn: document.getElementById("logout-btn"),
+  changePasswordModal: document.getElementById("change-password-modal"),
+  changePasswordForm: document.getElementById("change-password-form"),
+  changePasswordClose: document.getElementById("change-password-close"),
+  currentPassword: document.getElementById("current-password"),
+  newPassword: document.getElementById("new-password"),
+  confirmNewPassword: document.getElementById("confirm-new-password"),
+  changePasswordSubmit: document.getElementById("change-password-submit"),
+  changePasswordError: document.getElementById("change-password-error"),
   goalForm: document.getElementById("goal-form"),
   goalTitle: document.getElementById("goal-title"),
   goalDescription: document.getElementById("goal-description"),
@@ -709,6 +718,105 @@ async function clearAllGoals() {
   }
 }
 
+function showChangePasswordError(message) {
+  elements.changePasswordError.textContent = message;
+  elements.changePasswordError.style.background = 'rgba(239, 83, 80, 0.15)';
+  elements.changePasswordError.style.borderColor = 'rgba(239, 83, 80, 0.4)';
+  elements.changePasswordError.style.color = '#EF5350';
+  elements.changePasswordError.classList.add('is-visible');
+}
+
+function hideChangePasswordError() {
+  elements.changePasswordError.classList.remove('is-visible');
+}
+
+function showChangePasswordSuccess(message) {
+  elements.changePasswordError.textContent = message;
+  elements.changePasswordError.style.background = 'rgba(76, 175, 80, 0.15)';
+  elements.changePasswordError.style.borderColor = 'rgba(76, 175, 80, 0.4)';
+  elements.changePasswordError.style.color = '#66BB6A';
+  elements.changePasswordError.classList.add('is-visible');
+}
+
+function openChangePasswordModal() {
+  if (!elements.changePasswordModal) return;
+  elements.changePasswordForm.reset();
+  hideChangePasswordError();
+  if (typeof elements.changePasswordModal.showModal === 'function') {
+    elements.changePasswordModal.showModal();
+  } else {
+    elements.changePasswordModal.setAttribute('open', 'true');
+  }
+}
+
+function closeChangePasswordModal() {
+  if (!elements.changePasswordModal) return;
+  if (typeof elements.changePasswordModal.close === 'function') {
+    elements.changePasswordModal.close();
+  } else {
+    elements.changePasswordModal.removeAttribute('open');
+  }
+}
+
+async function handleChangePasswordSubmit(event) {
+  event.preventDefault();
+  hideChangePasswordError();
+
+  const currentPassword = elements.currentPassword.value;
+  const newPassword = elements.newPassword.value;
+  const confirmPassword = elements.confirmNewPassword.value;
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    showChangePasswordError('Alle felter er påkrævet');
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    showChangePasswordError('De nye adgangskoder matcher ikke');
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    showChangePasswordError('Ny adgangskode skal være mindst 6 tegn');
+    return;
+  }
+
+  if (currentPassword === newPassword) {
+    showChangePasswordError('Ny adgangskode skal være forskellig fra den nuværende');
+    return;
+  }
+
+  elements.changePasswordSubmit.disabled = true;
+  elements.changePasswordSubmit.textContent = 'Skifter...';
+
+  try {
+    const { error: signInError } = await signIn(currentUser.email, currentPassword);
+    if (signInError) {
+      showChangePasswordError('Nuværende adgangskode er forkert');
+      elements.changePasswordSubmit.disabled = false;
+      elements.changePasswordSubmit.textContent = 'Skift adgangskode';
+      return;
+    }
+
+    const { error } = await updatePassword(newPassword);
+    if (error) {
+      showChangePasswordError('Der opstod en fejl. Prøv igen.');
+      console.error('Password update error:', error);
+    } else {
+      showChangePasswordSuccess('Adgangskode opdateret!');
+      setTimeout(() => {
+        closeChangePasswordModal();
+      }, 1500);
+    }
+  } catch (error) {
+    showChangePasswordError('Der opstod en uventet fejl');
+    console.error('Password change error:', error);
+  } finally {
+    elements.changePasswordSubmit.disabled = false;
+    elements.changePasswordSubmit.textContent = 'Skift adgangskode';
+  }
+}
+
 async function init() {
   // Check if this is a password recovery link
   const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -746,6 +854,21 @@ async function init() {
   }
   if (elements.resetPasswordForm) {
     elements.resetPasswordForm.addEventListener("submit", handleResetPasswordSubmit);
+  }
+  if (elements.changePasswordBtn) {
+    elements.changePasswordBtn.addEventListener("click", openChangePasswordModal);
+  }
+  if (elements.changePasswordClose) {
+    elements.changePasswordClose.addEventListener("click", closeChangePasswordModal);
+  }
+  if (elements.changePasswordForm) {
+    elements.changePasswordForm.addEventListener("submit", handleChangePasswordSubmit);
+  }
+  if (elements.changePasswordModal) {
+    elements.changePasswordModal.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeChangePasswordModal();
+    });
   }
   if (elements.logoutBtn) {
     elements.logoutBtn.addEventListener("click", handleLogout);
