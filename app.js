@@ -859,17 +859,17 @@ async function init() {
   if (elements.resetPasswordForm) {
     elements.resetPasswordForm.addEventListener("submit", handleResetPasswordSubmit);
   }
-  console.log('Change password button:', elements.changePasswordBtn);
-  console.log('Change password modal:', elements.changePasswordModal);
-
   if (elements.changePasswordBtn) {
-    console.log('Adding event listener to change password button');
-    elements.changePasswordBtn.addEventListener("click", openChangePasswordModal);
-  } else {
-    console.error('Change password button not found!');
+    elements.changePasswordBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openChangePasswordModal();
+    });
   }
   if (elements.changePasswordClose) {
-    elements.changePasswordClose.addEventListener("click", closeChangePasswordModal);
+    elements.changePasswordClose.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeChangePasswordModal();
+    });
   }
   if (elements.changePasswordForm) {
     elements.changePasswordForm.addEventListener("submit", handleChangePasswordSubmit);
@@ -881,7 +881,10 @@ async function init() {
     });
   }
   if (elements.logoutBtn) {
-    elements.logoutBtn.addEventListener("click", handleLogout);
+    elements.logoutBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await handleLogout();
+    });
   }
   if (elements.goalForm) {
     elements.goalForm.addEventListener("submit", handleFormSubmit);
