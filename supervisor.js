@@ -179,9 +179,15 @@ async function handleDeleteUser(userId, userEmail) {
   if (!confirmed) return;
 
   try {
-    const { error } = await supabase.auth.admin.deleteUser(userId);
+    const { data, error } = await supabase.rpc('delete_user_as_supervisor', {
+      target_user_id: userId
+    });
 
     if (error) throw error;
+
+    if (data?.error) {
+      throw new Error(data.error);
+    }
 
     const userSection = document.querySelector(`[data-user-id="${userId}"]`);
     if (userSection) {
