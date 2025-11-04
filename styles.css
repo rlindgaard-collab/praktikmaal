@@ -166,18 +166,34 @@ p {
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: visible;
   align-items: flex-end;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.binder-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.binder-tabs::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.binder-tabs::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
 }
 
 .binder-tabs__tab {
   --tab-color: #4caf50;
   --tab-text-color: #0d0d0d;
-  flex: 0 0 clamp(90px, 22vw, 140px);
+  flex: 0 0 auto;
+  min-width: clamp(120px, 25vw, 160px);
   position: relative;
   border: none;
   border-radius: 16px 16px 6px 6px;
