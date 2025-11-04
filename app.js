@@ -14,6 +14,7 @@ let editingGoalId = null;
 let activeGoalId = null;
 let currentUser = null;
 let isSignUpMode = false;
+let isRecoveryMode = false;
 
 const elements = {
   authView: document.getElementById("auth-view"),
@@ -260,8 +261,10 @@ async function handleResetPasswordSubmit(event) {
       console.error('Password update error:', error);
     } else {
       showResetSuccess('Adgangskode opdateret! Omdirigerer...');
+      isRecoveryMode = false;
       setTimeout(() => {
         window.location.hash = '';
+        window.history.replaceState(null, '', window.location.pathname);
         showAppView();
       }, 1500);
     }
@@ -276,17 +279,14 @@ async function handleResetPasswordSubmit(event) {
 
 async function handleAuthStateChange(event, session) {
   if (event === 'PASSWORD_RECOVERY') {
+    isRecoveryMode = true;
     showResetPasswordView();
     return;
   }
 
   if (session?.user) {
-    // Check if we're in password recovery mode
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const type = hashParams.get('type');
-
-    if (type === 'recovery') {
-      // Don't auto-login, stay on reset password view
+    // If we're in recovery mode, stay on reset password view
+    if (isRecoveryMode) {
       showResetPasswordView();
       return;
     }
@@ -303,6 +303,7 @@ async function handleAuthStateChange(event, session) {
     currentUser = null;
     goals = [];
     activeGoalId = null;
+    isRecoveryMode = false;
     showAuthView();
   }
 }
@@ -841,15 +842,20 @@ async function init() {
   const type = hashParams.get('type');
 
   if (type === 'recovery') {
-    // Show reset password view immediately for recovery links
+    // Mark that we're in recovery mode
+    isRecoveryMode = true;
     showResetPasswordView();
-    // Set up auth listener for subsequent auth changes
-    onAuthStateChange(handleAuthStateChange);
-    return;
   }
 
-  // Set up auth state listener FIRST to catch PASSWORD_RECOVERY events
+  // Set up auth state listener
   onAuthStateChange(handleAuthStateChange);
+
+  // If we're in recovery mode, don't check for existing session
+  if (isRecoveryMode) {
+    // Set up event listeners
+    setupEventListeners();
+    return;
+  }
 
   const { user } = await getCurrentUser();
   if (user) {
@@ -861,6 +867,10 @@ async function init() {
     showAuthView();
   }
 
+  setupEventListeners();
+}
+
+function setupEventListeners() {
   if (elements.authForm) {
     elements.authForm.addEventListener("submit", handleAuthSubmit);
   }
