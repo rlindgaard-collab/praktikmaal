@@ -173,16 +173,16 @@ p {
   background: var(--tab-color);
   background: linear-gradient(160deg, var(--tab-color), color-mix(in srgb, var(--tab-color) 65%, #1b1b1b));
   color: var(--tab-text-color);
-  padding: 10px 12px 8px;
+  padding: 8px 12px 6px;
   text-align: left;
   font-weight: 600;
-  font-size: clamp(0.9rem, 0.35vw + 0.84rem, 1rem);
+  font-size: clamp(0.85rem, 0.3vw + 0.8rem, 0.95rem);
   cursor: pointer;
   box-shadow: 0 14px 24px rgba(0, 0, 0, 0.35);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   scroll-snap-align: start;
   white-space: nowrap;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .binder-tabs__tab::after {
