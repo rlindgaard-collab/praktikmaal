@@ -59,32 +59,14 @@
           <h1>Praktikmål Tracker</h1>
           <p>Hold overblik over mål, status og refleksioner.</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 16px;">
-          <div id="user-info" class="user-info">
-            <span class="user-info__email" id="user-email"></span>
-            <button id="logout-btn" class="ghost-button user-info__logout" type="button">
-              Log ud
-            </button>
-          </div>
-          <button id="toggle-help" class="ghost-button" type="button">
-            Vis hjælp
+        <div id="user-info" class="user-info">
+          <span class="user-info__email" id="user-email"></span>
+          <button id="logout-btn" class="ghost-button user-info__logout" type="button">
+            Log ud
           </button>
         </div>
       </header>
 
-      <section id="help-panel" class="panel panel--hidden">
-        <h2>Sådan fungerer det</h2>
-        <ul>
-          <li>
-            Opret et praktikmål med titel, beskrivelse og evt. upload af PDF.
-          </li>
-          <li>
-            Skift status mellem rød, gul og grøn for at markere progression.
-          </li>
-          <li>Tilføj og opdater refleksioner løbende.</li>
-          <li>Alle data gemmes sikkert i skyen og tilgængeligt fra alle dine enheder.</li>
-        </ul>
-      </section>
 
       <main class="app-main">
         <form id="goal-form" class="card card--form">

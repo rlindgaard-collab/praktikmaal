@@ -27,8 +27,6 @@ const elements = {
   authToggleText: document.getElementById("auth-toggle-text"),
   userEmail: document.getElementById("user-email"),
   logoutBtn: document.getElementById("logout-btn"),
-  helpPanel: document.getElementById("help-panel"),
-  toggleHelp: document.getElementById("toggle-help"),
   goalForm: document.getElementById("goal-form"),
   goalTitle: document.getElementById("goal-title"),
   goalDescription: document.getElementById("goal-description"),
@@ -579,10 +577,6 @@ async function handleEditorSubmit(event) {
   closeEditor();
 }
 
-function toggleHelpPanel() {
-  const isHidden = elements.helpPanel.classList.toggle("panel--hidden");
-  elements.toggleHelp.textContent = isHidden ? "Vis hjælp" : "Skjul hjælp";
-}
 
 async function clearAllGoals() {
   if (!goals.length) return;
@@ -626,9 +620,6 @@ async function init() {
   }
   if (elements.goalForm) {
     elements.goalForm.addEventListener("submit", handleFormSubmit);
-  }
-  if (elements.toggleHelp) {
-    elements.toggleHelp.addEventListener("click", toggleHelpPanel);
   }
   if (elements.clearAll) {
     elements.clearAll.addEventListener("click", clearAllGoals);
