@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Praktikmål Tracker</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1>Praktikmål Tracker</h1>
+          <p>Hold overblik over mål, status og refleksioner.</p>
+        </div>
+        <button id="toggle-help" class="ghost-button" type="button">
+          Vis hjælp
+        </button>
+      </header>
+
+      <section id="help-panel" class="panel panel--hidden">
+        <h2>Sådan fungerer det</h2>
+        <ul>
+          <li>
+            Opret et praktikmål med titel, beskrivelse og evt. upload af PDF.
+          </li>
+          <li>
+            Skift status mellem rød, gul og grøn for at markere progression.
+          </li>
+          <li>Tilføj og opdater refleksioner løbende.</li>
+          <li>Alle data lagres lokalt i din browser.</li>
+        </ul>
+      </section>
+
+      <main class="app-main">
+        <form id="goal-form" class="card card--form">
+          <h2>Nyt praktikmål</h2>
+          <label class="field">
+            <span>Titel</span>
+            <input
+              type="text"
+              id="goal-title"
+              name="title"
+              required
+              maxlength="120"
+              placeholder="Fx Kundebetjening i skranken"
+            />
+          </label>
+
+          <label class="field">
+            <span>Beskrivelse</span>
+            <textarea
+              id="goal-description"
+              name="description"
+              rows="3"
+              placeholder="Kort beskrivelse af hvad der skal opnås"
+            ></textarea>
+          </label>
+
+          <label class="field field--color">
+            <span>Fanefarve</span>
+            <div
+              class="color-picker"
+              role="radiogroup"
+              aria-label="Vælg fanefarve"
+            >
+              <label class="color-swatch" title="Grøn">
+                <input
+                  type="radio"
+                  name="color"
+                  value="#66BB6A"
+                  checked
+                />
+                <span
+                  class="color-swatch__chip"
+                  style="--swatch-color: #66BB6A"
+                >
+                  <span class="visually-hidden">Grøn</span>
+                </span>
+              </label>
+              <label class="color-swatch" title="Rød">
+                <input type="radio" name="color" value="#EF5350" />
+                <span
+                  class="color-swatch__chip"
+                  style="--swatch-color: #EF5350"
+                >
+                  <span class="visually-hidden">Rød</span>
+                </span>
+              </label>
+              <label class="color-swatch" title="Orange">
+                <input type="radio" name="color" value="#FF7043" />
+                <span
+                  class="color-swatch__chip"
+                  style="--swatch-color: #FF7043"
+                >
+                  <span class="visually-hidden">Orange</span>
+                </span>
+              </label>
+              <label class="color-swatch" title="Gul">
+                <input type="radio" name="color" value="#FFCA28" />
+                <span
+                  class="color-swatch__chip"
+                  style="--swatch-color: #FFCA28"
+                >
+                  <span class="visually-hidden">Gul</span>
+                </span>
+              </label>
+              <label class="color-swatch" title="Blå">
+                <input type="radio" name="color" value="#42A5F5" />
+                <span
+                  class="color-swatch__chip"
+                  style="--swatch-color: #42A5F5"
+                >
+                  <span class="visually-hidden">Blå</span>
+                </span>
+              </label>
+              <label class="color-swatch" title="Lilla">
+                <input type="radio" name="color" value="#AB47BC" />
+                <span
+                  class="color-swatch__chip"
+                  style="--swatch-color: #AB47BC"
+                >
+                  <span class="visually-hidden">Lilla</span>
+                </span>
+              </label>
+            </div>
+          </label>
+
+          <label class="field">
+            <span>Praktikmål (PDF)</span>
+            <input type="file" id="goal-file" name="file" accept="application/pdf" />
+            <small>
+              Filen gemmes lokalt i din browser. Store filer kan påvirke ydeevnen.
+            </small>
+          </label>
+
+          <button type="submit" class="primary-button">
+            Tilføj praktikmål
+          </button>
+        </form>
+
+        <section class="card-list" id="goal-list">
+          <header class="card-list__header">
+            <h2>Dine praktikmål</h2>
+            <button id="clear-all" class="ghost-button" type="button">
+              Ryd alle mål
+            </button>
+          </header>
+          <nav class="binder-tabs" id="binder-tabs" role="tablist" aria-label="Praktikmål">
+          </nav>
+          <p class="empty-state">Ingen mål endnu. Tilføj det første i formularen.</p>
+        </section>
+      </main>
+    </div>
+
+    <template id="goal-template">
+      <article class="card card--goal">
+        <div class="goal-header">
+          <div>
+            <h3 class="goal-title"></h3>
+            <p class="goal-description"></p>
+          </div>
+          <span class="status-chip" data-status=""></span>
+        </div>
+
+        <div class="goal-body">
+          <div class="status-selector" role="group" aria-label="Status">
+            <button type="button" data-status="red">Rød</button>
+            <button type="button" data-status="yellow">Gul</button>
+            <button type="button" data-status="green">Grøn</button>
+          </div>
+
+          <label class="field field--reflection">
+            <span>Refleksion</span>
+            <textarea rows="4" placeholder="Notér læring, aftaler og næste skridt"></textarea>
+          </label>
+
+          <div class="goal-file">
+            <span class="goal-file__label">Vedhæftet praktikmål:</span>
+            <a class="goal-file__link" href="#" target="_blank" rel="noopener">Vis PDF</a>
+            <button type="button" class="ghost-button ghost-button--danger remove-file">
+              Fjern
+            </button>
+          </div>
+          <p class="goal-file goal-file--missing">
+            Ingen fil vedhæftet. Upload via rediger-knappen.
+          </p>
+        </div>
+
+        <footer class="goal-footer">
+          <button type="button" class="ghost-button edit-goal">Rediger</button>
+          <button type="button" class="ghost-button ghost-button--danger delete-goal">
+            Slet
+          </button>
+        </footer>
+      </article>
+    </template>
+
+    <dialog id="goal-editor" class="modal">
+      <form method="dialog" class="modal__content">
+        <header class="modal__header">
+          <h2>Rediger praktikmål</h2>
+          <button type="button" class="ghost-button modal__close">Luk</button>
+        </header>
+        <label class="field">
+          <span>Titel</span>
+          <input type="text" name="edit-title" required maxlength="120" />
+        </label>
+        <label class="field">
+          <span>Beskrivelse</span>
+          <textarea name="edit-description" rows="3"></textarea>
+        </label>
+        <label class="field field--color">
+          <span>Fanefarve</span>
+          <div
+            class="color-picker"
+            role="radiogroup"
+            aria-label="Vælg fanefarve"
+          >
+            <label class="color-swatch" title="Grøn">
+              <input
+                type="radio"
+                name="edit-color"
+                value="#66BB6A"
+                checked
+              />
+              <span
+                class="color-swatch__chip"
+                style="--swatch-color: #66BB6A"
+              >
+                <span class="visually-hidden">Grøn</span>
+              </span>
+            </label>
+            <label class="color-swatch" title="Rød">
+              <input type="radio" name="edit-color" value="#EF5350" />
+              <span
+                class="color-swatch__chip"
+                style="--swatch-color: #EF5350"
+              >
+                <span class="visually-hidden">Rød</span>
+              </span>
+            </label>
+            <label class="color-swatch" title="Orange">
+              <input type="radio" name="edit-color" value="#FF7043" />
+              <span
+                class="color-swatch__chip"
+                style="--swatch-color: #FF7043"
+              >
+                <span class="visually-hidden">Orange</span>
+              </span>
+            </label>
+            <label class="color-swatch" title="Gul">
+              <input type="radio" name="edit-color" value="#FFCA28" />
+              <span class="color-swatch__chip" style="--swatch-color: #FFCA28">
+                <span class="visually-hidden">Gul</span>
+              </span>
+            </label>
+            <label class="color-swatch" title="Blå">
+              <input type="radio" name="edit-color" value="#42A5F5" />
+              <span
+                class="color-swatch__chip"
+                style="--swatch-color: #42A5F5"
+              >
+                <span class="visually-hidden">Blå</span>
+              </span>
+            </label>
+            <label class="color-swatch" title="Lilla">
+              <input type="radio" name="edit-color" value="#AB47BC" />
+              <span
+                class="color-swatch__chip"
+                style="--swatch-color: #AB47BC"
+              >
+                <span class="visually-hidden">Lilla</span>
+              </span>
+            </label>
+          </div>
+        </label>
+        <label class="field">
+          <span>Opdater PDF</span>
+          <input type="file" name="edit-file" accept="application/pdf" />
+        </label>
+        <footer class="modal__footer">
+          <button type="submit" class="primary-button">Gem ændringer</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <script defer src="./app.js"></script>
+  </body>
+</html>
