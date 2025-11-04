@@ -133,9 +133,20 @@ function renderUsersOverview() {
     return `
       <div class="user-section">
         <div class="user-info-card">
-          <div class="user-info">
-            <h2>${escapeHtml(user.email)}</h2>
-            <p class="user-meta">Bruger ID: ${user.id.slice(0, 8)}... • ${user.goals.length} mål</p>
+          <div class="user-info-label">Bruger Information</div>
+          <div class="user-info-details">
+            <div class="user-info-row">
+              <span class="user-info-label-text">Email:</span>
+              <span class="user-info-value">${escapeHtml(user.email)}</span>
+            </div>
+            <div class="user-info-row">
+              <span class="user-info-label-text">Bruger ID:</span>
+              <span class="user-info-value">${user.id.slice(0, 8)}...</span>
+            </div>
+            <div class="user-info-row">
+              <span class="user-info-label-text">Antal mål:</span>
+              <span class="user-info-value">${user.goals.length}</span>
+            </div>
           </div>
         </div>
         <div class="user-goals">
