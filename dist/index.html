@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Praktikmål Tracker</title>
-    <script type="module" crossorigin src="/assets/index-EijWqDq9.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CEmK-nHp.css">
+    <script type="module" crossorigin src="/assets/index-BSADpUAf.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-FS4AZWkF.css">
   </head>
   <body>
     <div id="auth-view" class="auth-container">
@@ -105,10 +105,6 @@
           <p>Hold overblik over mål, status og refleksioner.</p>
         </div>
         <div id="user-info" class="user-info">
-          <span class="user-info__email" id="user-email"></span>
-          <button id="change-password-btn" class="ghost-button" type="button">
-            Skift adgangskode
-          </button>
           <button id="logout-btn" class="ghost-button user-info__logout" type="button">
             Log ud
           </button>
@@ -117,8 +113,12 @@
 
 
       <main class="app-main">
-        <form id="goal-form" class="card card--form">
-          <h2>Nyt praktikmål</h2>
+        <details class="card card--form" id="goal-form-container">
+          <summary class="form-toggle">
+            <h2>Nyt praktikmål</h2>
+            <span class="form-toggle-icon">▼</span>
+          </summary>
+          <form id="goal-form" class="form-content">
           <label class="field">
             <span>Titel</span>
             <input
@@ -132,7 +132,7 @@
           </label>
 
           <label class="field">
-            <span>Beskrivelse</span>
+            <span>Mål</span>
             <textarea
               id="goal-description"
               name="description"
@@ -218,10 +218,11 @@
             </small>
           </label>
 
-          <button type="submit" class="primary-button">
-            Tilføj praktikmål
-          </button>
-        </form>
+            <button type="submit" class="primary-button">
+              Tilføj praktikmål
+            </button>
+          </form>
+        </details>
 
         <section class="card-list" id="goal-list">
           <header class="card-list__header">
@@ -244,14 +245,22 @@
             <h3 class="goal-title"></h3>
             <p class="goal-description"></p>
           </div>
-          <span class="status-chip" data-status=""></span>
         </div>
 
         <div class="goal-body">
-          <div class="status-selector" role="group" aria-label="Status">
-            <button type="button" data-status="red">Rød</button>
-            <button type="button" data-status="yellow">Gul</button>
-            <button type="button" data-status="green">Grøn</button>
+          <div class="progress-container">
+            <label class="progress-label">
+              <span class="progress-label-text">Fremskridt</span>
+              <span class="progress-percentage">0%</span>
+            </label>
+            <input
+              type="range"
+              class="progress-slider"
+              min="0"
+              max="100"
+              value="0"
+              aria-label="Fremskridt i procent"
+            />
           </div>
 
           <label class="field field--reflection">
@@ -262,8 +271,8 @@
           <div class="goal-file">
             <span class="goal-file__label">Vedhæftet praktikmål:</span>
             <a class="goal-file__link" href="#" target="_blank" rel="noopener">Vis PDF</a>
-            <button type="button" class="ghost-button ghost-button--danger remove-file">
-              Fjern
+            <button type="button" class="remove-file-btn" aria-label="Fjern fil" title="Fjern fil">
+              ×
             </button>
           </div>
           <p class="goal-file goal-file--missing">
@@ -291,7 +300,7 @@
           <input type="text" name="edit-title" required maxlength="120" />
         </label>
         <label class="field">
-          <span>Beskrivelse</span>
+          <span>Mål</span>
           <textarea name="edit-description" rows="3"></textarea>
         </label>
         <label class="field field--color">
@@ -359,6 +368,21 @@
             </label>
           </div>
         </label>
+        <div class="progress-container">
+          <label class="progress-label">
+            <span class="progress-label-text">Fremskridt</span>
+            <span class="progress-percentage-edit">0%</span>
+          </label>
+          <input
+            type="range"
+            class="progress-slider"
+            name="edit-progress"
+            min="0"
+            max="100"
+            value="0"
+            aria-label="Fremskridt i procent"
+          />
+        </div>
         <label class="field">
           <span>Opdater PDF</span>
           <input type="file" name="edit-file" accept="application/pdf" />
