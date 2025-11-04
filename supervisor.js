@@ -38,26 +38,47 @@ async function fetchAllUsersWithGoals() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (goalsError) throw goalsError;
+    if (goalsError) {
+      console.error('Goals error:', goalsError);
+      throw goalsError;
+    }
+
+    if (!goals || goals.length === 0) {
+      usersData = [];
+      renderUsersOverview();
+      return;
+    }
+
+    const { data: profiles, error: profilesError } = await supabase
+      .from('user_profiles')
+      .select('*');
+
+    if (profilesError) {
+      console.error('Profiles error:', profilesError);
+    }
+
+    const profileMap = new Map();
+    if (profiles) {
+      profiles.forEach(profile => {
+        profileMap.set(profile.user_id, profile);
+      });
+    }
 
     const userGoalsMap = new Map();
 
     for (const goal of goals) {
-      if (!userGoalsMap.has(goal.user_id)) {
-        const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(goal.user_id);
+      const userId = goal.user_id;
 
-        if (!userError && user) {
-          userGoalsMap.set(goal.user_id, {
-            id: user.id,
-            email: user.email,
-            goals: []
-          });
-        }
+      if (!userGoalsMap.has(userId)) {
+        const profile = profileMap.get(userId);
+        userGoalsMap.set(userId, {
+          id: userId,
+          email: profile?.email || `Bruger ${userId.slice(0, 8)}`,
+          goals: []
+        });
       }
 
-      if (userGoalsMap.has(goal.user_id)) {
-        userGoalsMap.get(goal.user_id).goals.push(goal);
-      }
+      userGoalsMap.get(userId).goals.push(goal);
     }
 
     usersData = Array.from(userGoalsMap.values());
