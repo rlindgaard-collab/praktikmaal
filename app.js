@@ -15,6 +15,7 @@ let activeGoalId = null;
 let currentUser = null;
 let isSignUpMode = false;
 let isRecoveryMode = false;
+let reflectionUpdateTimer = null;
 
 const elements = {
   authView: document.getElementById("auth-view"),
@@ -378,15 +379,30 @@ async function createGoalLocal(payload) {
   }
 }
 
-async function updateGoalLocal(id, updates) {
+async function updateGoalLocal(id, updates, skipRender = false) {
   try {
     const updatedGoal = await updateGoalDb(id, updates);
     goals = goals.map((goal) => goal.id === id ? updatedGoal : goal);
-    renderGoals();
+    if (!skipRender) {
+      renderGoals();
+    }
   } catch (error) {
     console.error('Error updating goal:', error);
     alert('Der opstod en fejl ved opdatering af målet');
   }
+}
+
+function updateGoalReflection(id, reflection) {
+  // Update local data immediately
+  goals = goals.map((goal) =>
+    goal.id === id ? { ...goal, reflection } : goal
+  );
+
+  // Debounce database update
+  clearTimeout(reflectionUpdateTimer);
+  reflectionUpdateTimer = setTimeout(() => {
+    updateGoalLocal(id, { reflection }, true);
+  }, 500);
 }
 
 async function deleteGoalLocal(id) {
@@ -511,7 +527,7 @@ function renderGoals() {
   });
 
   reflectionField.addEventListener("input", (event) => {
-    updateGoalLocal(activeGoal.id, { reflection: event.target.value });
+    updateGoalReflection(activeGoal.id, event.target.value);
   });
 
   removeFileBtn.addEventListener("click", () => {
