@@ -710,6 +710,18 @@ async function clearAllGoals() {
 }
 
 async function init() {
+  // Check if this is a password recovery link
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  const type = hashParams.get('type');
+
+  if (type === 'recovery') {
+    // Show reset password view immediately for recovery links
+    showResetPasswordView();
+    // Set up auth listener for subsequent auth changes
+    onAuthStateChange(handleAuthStateChange);
+    return;
+  }
+
   // Set up auth state listener FIRST to catch PASSWORD_RECOVERY events
   onAuthStateChange(handleAuthStateChange);
 
