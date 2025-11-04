@@ -473,6 +473,7 @@ p {
 }
 
 .goal-file {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -492,6 +493,36 @@ p {
 
 .goal-file__link:hover {
   text-decoration: underline;
+}
+
+.remove-file-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: var(--color-danger);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.remove-file-btn:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+.remove-file-btn:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
 }
 
 .is-hidden {

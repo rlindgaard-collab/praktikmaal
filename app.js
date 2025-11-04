@@ -499,7 +499,7 @@ function renderGoals() {
   const reflectionField = article.querySelector(".field--reflection textarea");
   const fileContainer = article.querySelector(".goal-file");
   const missingFile = article.querySelector(".goal-file--missing");
-  const removeFileBtn = article.querySelector(".remove-file");
+  const removeFileBtn = article.querySelector(".remove-file-btn");
   const editBtn = article.querySelector(".edit-goal");
   const deleteBtn = article.querySelector(".delete-goal");
   const panelId = `goal-panel-${activeGoal.id}`;
