@@ -34,8 +34,6 @@ const elements = {
   resetPasswordConfirm: document.getElementById("reset-password-confirm"),
   resetSubmit: document.getElementById("reset-submit"),
   resetError: document.getElementById("reset-error"),
-  userEmail: document.getElementById("user-email"),
-  changePasswordBtn: document.getElementById("change-password-btn"),
   logoutBtn: document.getElementById("logout-btn"),
   changePasswordModal: document.getElementById("change-password-modal"),
   changePasswordForm: document.getElementById("change-password-form"),
@@ -293,7 +291,6 @@ async function handleAuthStateChange(event, session) {
     }
 
     currentUser = session.user;
-    elements.userEmail.textContent = currentUser.email;
     // Clear any hash from URL (e.g., recovery tokens)
     if (window.location.hash) {
       window.history.replaceState(null, '', window.location.pathname);
@@ -918,7 +915,6 @@ async function init() {
   const { user } = await getCurrentUser();
   if (user) {
     currentUser = user;
-    elements.userEmail.textContent = user.email;
     showAppView();
     await loadAndRenderGoals();
   } else {
@@ -940,12 +936,6 @@ function setupEventListeners() {
   }
   if (elements.resetPasswordForm) {
     elements.resetPasswordForm.addEventListener("submit", handleResetPasswordSubmit);
-  }
-  if (elements.changePasswordBtn) {
-    elements.changePasswordBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      openChangePasswordModal();
-    });
   }
   if (elements.changePasswordClose) {
     elements.changePasswordClose.addEventListener("click", (e) => {
