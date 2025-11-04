@@ -281,6 +281,16 @@ async function handleAuthStateChange(event, session) {
   }
 
   if (session?.user) {
+    // Check if we're in password recovery mode
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const type = hashParams.get('type');
+
+    if (type === 'recovery') {
+      // Don't auto-login, stay on reset password view
+      showResetPasswordView();
+      return;
+    }
+
     currentUser = session.user;
     elements.userEmail.textContent = currentUser.email;
     // Clear any hash from URL (e.g., recovery tokens)
