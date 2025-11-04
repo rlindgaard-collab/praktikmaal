@@ -4,11 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Praktikmål Tracker</title>
-    <script type="module" crossorigin src="/assets/index-BSADpUAf.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-FS4AZWkF.css">
+    <script type="module" crossorigin src="/assets/index-BXZElhk1.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BdvubroO.css">
   </head>
   <body>
     <div id="auth-view" class="auth-container">
+      <button id="supervisor-login-btn" class="supervisor-login-btn" type="button" title="Vejleder login">
+        👤
+      </button>
+
       <div class="auth-card">
         <h1>Praktikmål Tracker</h1>
         <p>Log ind for at se dine praktikmål</p>
@@ -56,6 +60,37 @@
         </div>
       </div>
     </div>
+
+    <dialog id="supervisor-modal" class="modal">
+      <button id="close-supervisor-modal" class="modal__close-corner" type="button" title="Luk">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="modal__content">
+        <div class="modal__header">
+          <h2>Vejleder Login</h2>
+        </div>
+        <div id="supervisor-error" class="auth-error"></div>
+        <form id="supervisor-form" class="auth-form">
+          <label class="field">
+            <span>Vejlederkode</span>
+            <input
+              type="password"
+              id="supervisor-code"
+              name="code"
+              required
+              placeholder="Indtast vejlederkode"
+              autocomplete="off"
+            />
+          </label>
+          <button type="submit" class="primary-button">
+            Log ind som vejleder
+          </button>
+        </form>
+      </div>
+    </dialog>
 
     <div id="reset-password-view" class="auth-container" style="display: none;">
       <div class="auth-card">
@@ -227,9 +262,6 @@
         <section class="card-list" id="goal-list">
           <header class="card-list__header">
             <h2>Dine praktikmål</h2>
-            <button id="clear-all" class="ghost-button" type="button">
-              Ryd alle mål
-            </button>
           </header>
           <nav class="binder-tabs" id="binder-tabs" role="tablist" aria-label="Praktikmål">
           </nav>
