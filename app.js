@@ -666,6 +666,11 @@ async function handleFormSubmit(event) {
   elements.goalForm.reset();
   setSelectedColor(elements.goalForm, "color", color);
   elements.goalFile.value = "";
+
+  const formContainer = document.getElementById('goal-form-container');
+  if (formContainer) {
+    formContainer.removeAttribute('open');
+  }
 }
 
 function openEditor(goalId) {

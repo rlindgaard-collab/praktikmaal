@@ -117,8 +117,12 @@
 
 
       <main class="app-main">
-        <form id="goal-form" class="card card--form">
-          <h2>Nyt praktikmål</h2>
+        <details class="card card--form" id="goal-form-container">
+          <summary class="form-toggle">
+            <h2>Nyt praktikmål</h2>
+            <span class="form-toggle-icon">▼</span>
+          </summary>
+          <form id="goal-form" class="form-content">
           <label class="field">
             <span>Titel</span>
             <input
@@ -218,10 +222,11 @@
             </small>
           </label>
 
-          <button type="submit" class="primary-button">
-            Tilføj praktikmål
-          </button>
-        </form>
+            <button type="submit" class="primary-button">
+              Tilføj praktikmål
+            </button>
+          </form>
+        </details>
 
         <section class="card-list" id="goal-list">
           <header class="card-list__header">
