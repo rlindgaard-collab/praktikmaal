@@ -1,3 +1,30 @@
+.supervisor-logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.supervisor-logout-btn:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+  transform: scale(1.05);
+}
+
 .supervisor-view {
   max-width: 1400px;
   margin: 0 auto;
@@ -241,6 +268,18 @@
 }
 
 @media (max-width: 768px) {
+  .supervisor-logout-btn {
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .supervisor-logout-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .supervisor-content {
     gap: 32px;
   }
