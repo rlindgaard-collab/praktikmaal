@@ -1,4 +1,4 @@
-import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser, resetPassword } from './auth.js';
+import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser, resetPassword, updatePassword } from './auth.js';
 import { loadGoals, createGoal as createGoalDb, updateGoal as updateGoalDb, deleteGoal as deleteGoalDb } from './database.js';
 
 const statusLabels = {
@@ -17,6 +17,7 @@ let isSignUpMode = false;
 
 const elements = {
   authView: document.getElementById("auth-view"),
+  resetPasswordView: document.getElementById("reset-password-view"),
   appView: document.getElementById("app-view"),
   authForm: document.getElementById("auth-form"),
   authEmail: document.getElementById("auth-email"),
@@ -26,6 +27,11 @@ const elements = {
   authToggleBtn: document.getElementById("auth-toggle-btn"),
   authToggleText: document.getElementById("auth-toggle-text"),
   forgotPasswordBtn: document.getElementById("forgot-password-btn"),
+  resetPasswordForm: document.getElementById("reset-password-form"),
+  resetPassword: document.getElementById("reset-password"),
+  resetPasswordConfirm: document.getElementById("reset-password-confirm"),
+  resetSubmit: document.getElementById("reset-submit"),
+  resetError: document.getElementById("reset-error"),
   userEmail: document.getElementById("user-email"),
   logoutBtn: document.getElementById("logout-btn"),
   goalForm: document.getElementById("goal-form"),
@@ -174,19 +180,97 @@ async function handleForgotPassword() {
   }
 }
 
+function showResetError(message) {
+  elements.resetError.textContent = message;
+  elements.resetError.classList.add('is-visible');
+}
+
+function hideResetError() {
+  elements.resetError.classList.remove('is-visible');
+}
+
+function showResetSuccess(message) {
+  elements.resetError.textContent = message;
+  elements.resetError.style.background = 'rgba(76, 175, 80, 0.15)';
+  elements.resetError.style.borderColor = 'rgba(76, 175, 80, 0.4)';
+  elements.resetError.style.color = '#66BB6A';
+  elements.resetError.classList.add('is-visible');
+}
+
 function showAuthView() {
   elements.authView.style.display = 'flex';
+  elements.resetPasswordView.style.display = 'none';
   elements.appView.style.display = 'none';
   elements.authForm.reset();
   hideAuthError();
 }
 
+function showResetPasswordView() {
+  elements.authView.style.display = 'none';
+  elements.resetPasswordView.style.display = 'flex';
+  elements.appView.style.display = 'none';
+  elements.resetPasswordForm.reset();
+  hideResetError();
+}
+
 function showAppView() {
   elements.authView.style.display = 'none';
+  elements.resetPasswordView.style.display = 'none';
   elements.appView.style.display = 'block';
 }
 
+async function handleResetPasswordSubmit(event) {
+  event.preventDefault();
+  hideResetError();
+
+  const password = elements.resetPassword.value;
+  const passwordConfirm = elements.resetPasswordConfirm.value;
+
+  if (!password || !passwordConfirm) {
+    showResetError('Begge felter er påkrævet');
+    return;
+  }
+
+  if (password !== passwordConfirm) {
+    showResetError('Adgangskoderne matcher ikke');
+    return;
+  }
+
+  if (password.length < 6) {
+    showResetError('Adgangskoden skal være mindst 6 tegn');
+    return;
+  }
+
+  elements.resetSubmit.disabled = true;
+  elements.resetSubmit.textContent = 'Opdaterer...';
+
+  try {
+    const { error } = await updatePassword(password);
+    if (error) {
+      showResetError('Der opstod en fejl. Prøv igen.');
+      console.error('Password update error:', error);
+    } else {
+      showResetSuccess('Adgangskode opdateret! Omdirigerer...');
+      setTimeout(() => {
+        window.location.hash = '';
+        showAppView();
+      }, 1500);
+    }
+  } catch (error) {
+    showResetError('Der opstod en uventet fejl');
+    console.error('Password update error:', error);
+  } finally {
+    elements.resetSubmit.disabled = false;
+    elements.resetSubmit.textContent = 'Opdater adgangskode';
+  }
+}
+
 async function handleAuthStateChange(event, session) {
+  if (event === 'PASSWORD_RECOVERY') {
+    showResetPasswordView();
+    return;
+  }
+
   if (session?.user) {
     currentUser = session.user;
     elements.userEmail.textContent = currentUser.email;
@@ -646,6 +730,9 @@ async function init() {
   }
   if (elements.forgotPasswordBtn) {
     elements.forgotPasswordBtn.addEventListener("click", handleForgotPassword);
+  }
+  if (elements.resetPasswordForm) {
+    elements.resetPasswordForm.addEventListener("submit", handleResetPasswordSubmit);
   }
   if (elements.logoutBtn) {
     elements.logoutBtn.addEventListener("click", handleLogout);

@@ -57,6 +57,47 @@
       </div>
     </div>
 
+    <div id="reset-password-view" class="auth-container" style="display: none;">
+      <div class="auth-card">
+        <h1>Nulstil adgangskode</h1>
+        <p>Indtast din nye adgangskode</p>
+
+        <div id="reset-error" class="auth-error"></div>
+
+        <form id="reset-password-form" class="auth-form">
+          <label class="field">
+            <span>Ny adgangskode</span>
+            <input
+              type="password"
+              id="reset-password"
+              name="password"
+              required
+              placeholder="Min. 6 tegn"
+              minlength="6"
+              autocomplete="new-password"
+            />
+          </label>
+
+          <label class="field">
+            <span>Bekræft adgangskode</span>
+            <input
+              type="password"
+              id="reset-password-confirm"
+              name="password-confirm"
+              required
+              placeholder="Min. 6 tegn"
+              minlength="6"
+              autocomplete="new-password"
+            />
+          </label>
+
+          <button type="submit" class="primary-button" id="reset-submit">
+            Opdater adgangskode
+          </button>
+        </form>
+      </div>
+    </div>
+
     <div id="app-view" class="app-shell" style="display: none;">
       <header class="app-header">
         <div>
