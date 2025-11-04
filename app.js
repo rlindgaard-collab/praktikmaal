@@ -1,4 +1,5 @@
-const STORAGE_KEY = "praktikmål-tracker-v1";
+import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser } from './auth.js';
+import { loadGoals, createGoal as createGoalDb, updateGoal as updateGoalDb, deleteGoal as deleteGoalDb } from './database.js';
 
 const statusLabels = {
   red: "Rød",
@@ -8,36 +9,24 @@ const statusLabels = {
 
 const DEFAULT_COLOR = "#66BB6A";
 
-const dataService = {
-  load() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return [];
-      return parsed;
-    } catch (error) {
-      console.warn("Kunne ikke indlæse data", error);
-      return [];
-    }
-  },
-  save(goals) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
-    } catch (error) {
-      console.warn("Kunne ikke gemme data", error);
-      alert(
-        "Der opstod en fejl ved gemning. Tjek om din browser tillader localStorage."
-      );
-    }
-  },
-};
-
-let goals = dataService.load();
+let goals = [];
 let editingGoalId = null;
 let activeGoalId = null;
+let currentUser = null;
+let isSignUpMode = false;
 
 const elements = {
+  authView: document.getElementById("auth-view"),
+  appView: document.getElementById("app-view"),
+  authForm: document.getElementById("auth-form"),
+  authEmail: document.getElementById("auth-email"),
+  authPassword: document.getElementById("auth-password"),
+  authSubmit: document.getElementById("auth-submit"),
+  authError: document.getElementById("auth-error"),
+  authToggleBtn: document.getElementById("auth-toggle-btn"),
+  authToggleText: document.getElementById("auth-toggle-text"),
+  userEmail: document.getElementById("user-email"),
+  logoutBtn: document.getElementById("logout-btn"),
   helpPanel: document.getElementById("help-panel"),
   toggleHelp: document.getElementById("toggle-help"),
   goalForm: document.getElementById("goal-form"),
@@ -66,8 +55,132 @@ const editorControls = {
     : null,
 };
 
-function persist() {
-  dataService.save(goals);
+function showAuthError(message) {
+  elements.authError.textContent = message;
+  elements.authError.classList.add('is-visible');
+}
+
+function hideAuthError() {
+  elements.authError.classList.remove('is-visible');
+}
+
+function toggleAuthMode() {
+  isSignUpMode = !isSignUpMode;
+  if (isSignUpMode) {
+    elements.authSubmit.textContent = 'Opret konto';
+    elements.authToggleText.textContent = 'Har du allerede en konto?';
+    elements.authToggleBtn.textContent = 'Log ind';
+  } else {
+    elements.authSubmit.textContent = 'Log ind';
+    elements.authToggleText.textContent = 'Har du ikke en konto?';
+    elements.authToggleBtn.textContent = 'Opret konto';
+  }
+  hideAuthError();
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+  hideAuthError();
+
+  const email = elements.authEmail.value.trim();
+  const password = elements.authPassword.value;
+
+  if (!email || !password) {
+    showAuthError('Email og adgangskode er påkrævet');
+    return;
+  }
+
+  elements.authSubmit.disabled = true;
+  elements.authSubmit.textContent = 'Vent venligst...';
+
+  try {
+    if (isSignUpMode) {
+      const { error } = await signUp(email, password);
+      if (error) {
+        if (error.message.includes('already registered')) {
+          showAuthError('Denne email er allerede registreret');
+        } else {
+          showAuthError(error.message || 'Der opstod en fejl ved oprettelse af konto');
+        }
+      } else {
+        showAuthSuccess('Konto oprettet! Logger ind...');
+        setTimeout(async () => {
+          const { error: signInError } = await signIn(email, password);
+          if (signInError) {
+            showAuthError('Konto oprettet, men login fejlede. Prøv at logge ind manuelt.');
+            toggleAuthMode();
+          }
+        }, 1000);
+      }
+    } else {
+      const { error } = await signIn(email, password);
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          showAuthError('Forkert email eller adgangskode');
+        } else {
+          showAuthError(error.message || 'Der opstod en fejl ved login');
+        }
+      }
+    }
+  } catch (error) {
+    showAuthError('Der opstod en uventet fejl');
+    console.error('Auth error:', error);
+  } finally {
+    elements.authSubmit.disabled = false;
+    elements.authSubmit.textContent = isSignUpMode ? 'Opret konto' : 'Log ind';
+  }
+}
+
+function showAuthSuccess(message) {
+  elements.authError.textContent = message;
+  elements.authError.style.background = 'rgba(76, 175, 80, 0.15)';
+  elements.authError.style.borderColor = 'rgba(76, 175, 80, 0.4)';
+  elements.authError.style.color = '#66BB6A';
+  elements.authError.classList.add('is-visible');
+}
+
+async function handleLogout() {
+  const { error } = await signOut();
+  if (error) {
+    alert('Der opstod en fejl ved logout');
+    console.error('Logout error:', error);
+  }
+}
+
+function showAuthView() {
+  elements.authView.style.display = 'flex';
+  elements.appView.style.display = 'none';
+  elements.authForm.reset();
+  hideAuthError();
+}
+
+function showAppView() {
+  elements.authView.style.display = 'none';
+  elements.appView.style.display = 'block';
+}
+
+async function handleAuthStateChange(event, session) {
+  if (session?.user) {
+    currentUser = session.user;
+    elements.userEmail.textContent = currentUser.email;
+    showAppView();
+    await loadAndRenderGoals();
+  } else {
+    currentUser = null;
+    goals = [];
+    activeGoalId = null;
+    showAuthView();
+  }
+}
+
+async function loadAndRenderGoals() {
+  try {
+    goals = await loadGoals();
+    renderGoals();
+  } catch (error) {
+    console.error('Error loading goals:', error);
+    alert('Der opstod en fejl ved indlæsning af dine mål');
+  }
 }
 
 function getTextColorForBackground(hexColor) {
@@ -118,49 +231,41 @@ function setSelectedColor(container, name, value) {
   }
 }
 
-function createGoal(payload) {
-  const id =
-    window.crypto && typeof window.crypto.randomUUID === "function"
-      ? window.crypto.randomUUID()
-      : "goal-" + Date.now() + "-" + Math.random().toString(16).slice(2);
-
-  goals = [
-    {
-      id,
-      title: payload.title,
-      description: payload.description,
-      status: "red",
-      reflection: "",
-      pdf: payload.pdf || null,
-      color: payload.color || DEFAULT_COLOR,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    ...goals,
-  ];
-  activeGoalId = id;
-  persist();
-  renderGoals();
-}
-
-function updateGoal(id, updater) {
-  goals = goals.map((goal) => {
-    if (goal.id !== id) return goal;
-    const updated = { ...goal, ...updater(goal) };
-    updated.updatedAt = new Date().toISOString();
-    return updated;
-  });
-  persist();
-  renderGoals();
-}
-
-function deleteGoal(id) {
-  goals = goals.filter((goal) => goal.id !== id);
-  if (id === activeGoalId) {
-    activeGoalId = goals.length ? goals[0].id : null;
+async function createGoalLocal(payload) {
+  try {
+    const newGoal = await createGoalDb(payload);
+    goals = [newGoal, ...goals];
+    activeGoalId = newGoal.id;
+    renderGoals();
+  } catch (error) {
+    console.error('Error creating goal:', error);
+    alert('Der opstod en fejl ved oprettelse af målet');
   }
-  persist();
-  renderGoals();
+}
+
+async function updateGoalLocal(id, updates) {
+  try {
+    const updatedGoal = await updateGoalDb(id, updates);
+    goals = goals.map((goal) => goal.id === id ? updatedGoal : goal);
+    renderGoals();
+  } catch (error) {
+    console.error('Error updating goal:', error);
+    alert('Der opstod en fejl ved opdatering af målet');
+  }
+}
+
+async function deleteGoalLocal(id) {
+  try {
+    await deleteGoalDb(id);
+    goals = goals.filter((goal) => goal.id !== id);
+    if (id === activeGoalId) {
+      activeGoalId = goals.length ? goals[0].id : null;
+    }
+    renderGoals();
+  } catch (error) {
+    console.error('Error deleting goal:', error);
+    alert('Der opstod en fejl ved sletning af målet');
+  }
 }
 
 function readFileAsDataUrl(file) {
@@ -266,19 +371,19 @@ function renderGoals() {
     btn.addEventListener("click", () => {
       const newStatus = btn.dataset.status;
       if (!newStatus) return;
-      updateGoal(activeGoal.id, () => ({ status: newStatus }));
+      updateGoalLocal(activeGoal.id, { status: newStatus });
     });
   });
 
   reflectionField.addEventListener("input", (event) => {
-    updateGoal(activeGoal.id, () => ({ reflection: event.target.value }));
+    updateGoalLocal(activeGoal.id, { reflection: event.target.value });
   });
 
   removeFileBtn.addEventListener("click", () => {
     if (!activeGoal.pdf) return;
     const confirmed = confirm("Fjern den vedhæftede fil?");
     if (!confirmed) return;
-    updateGoal(activeGoal.id, () => ({ pdf: null }));
+    updateGoalLocal(activeGoal.id, { pdf: null });
   });
 
   editBtn.addEventListener("click", () => openEditor(activeGoal.id));
@@ -287,7 +392,7 @@ function renderGoals() {
       `Er du sikker på, at du vil slette "${activeGoal.title}"?`
     );
     if (confirmed) {
-      deleteGoal(activeGoal.id);
+      deleteGoalLocal(activeGoal.id);
     }
   });
 
@@ -378,7 +483,7 @@ async function handleFormSubmit(event) {
   if (file) {
     if (file.size > 4 * 1024 * 1024) {
       const cont = confirm(
-        "Filen er større end 4 MB og kan være svær at gemme lokalt. Fortsæt?"
+        "Filen er større end 4 MB. Fortsæt?"
       );
       if (!cont) {
         return;
@@ -393,7 +498,7 @@ async function handleFormSubmit(event) {
     }
   }
 
-  createGoal({ title, description, pdf, color });
+  await createGoalLocal({ title, description, pdf, color });
   elements.goalForm.reset();
   setSelectedColor(elements.goalForm, "color", color);
   elements.goalFile.value = "";
@@ -445,7 +550,7 @@ async function handleEditorSubmit(event) {
   if (file) {
     if (file.size > 4 * 1024 * 1024) {
       const cont = confirm(
-        "Filen er større end 4 MB og kan være svær at gemme lokalt. Fortsæt?"
+        "Filen er større end 4 MB. Fortsæt?"
       );
       if (!cont) {
         return;
@@ -460,12 +565,17 @@ async function handleEditorSubmit(event) {
     }
   }
 
-  updateGoal(editingGoalId, (goal) => ({
+  const updates = {
     title,
     description,
     color,
-    pdf: pdfPayload || goal.pdf,
-  }));
+  };
+
+  if (pdfPayload) {
+    updates.pdf = pdfPayload;
+  }
+
+  await updateGoalLocal(editingGoalId, updates);
   closeEditor();
 }
 
@@ -474,21 +584,46 @@ function toggleHelpPanel() {
   elements.toggleHelp.textContent = isHidden ? "Vis hjælp" : "Skjul hjælp";
 }
 
-function clearAllGoals() {
+async function clearAllGoals() {
   if (!goals.length) return;
   const confirmed = confirm(
-    "Dette sletter alle praktikmål fra denne browser. Fortsæt?"
+    "Dette sletter alle praktikmål permanent. Fortsæt?"
   );
   if (!confirmed) return;
-  goals = [];
-  activeGoalId = null;
-  persist();
-  renderGoals();
+
+  try {
+    await Promise.all(goals.map(goal => deleteGoalDb(goal.id)));
+    goals = [];
+    activeGoalId = null;
+    renderGoals();
+  } catch (error) {
+    console.error('Error clearing goals:', error);
+    alert('Der opstod en fejl ved sletning af alle mål');
+  }
 }
 
-function init() {
-  renderGoals();
+async function init() {
+  const { user } = await getCurrentUser();
+  if (user) {
+    currentUser = user;
+    elements.userEmail.textContent = user.email;
+    showAppView();
+    await loadAndRenderGoals();
+  } else {
+    showAuthView();
+  }
 
+  onAuthStateChange(handleAuthStateChange);
+
+  if (elements.authForm) {
+    elements.authForm.addEventListener("submit", handleAuthSubmit);
+  }
+  if (elements.authToggleBtn) {
+    elements.authToggleBtn.addEventListener("click", toggleAuthMode);
+  }
+  if (elements.logoutBtn) {
+    elements.logoutBtn.addEventListener("click", handleLogout);
+  }
   if (elements.goalForm) {
     elements.goalForm.addEventListener("submit", handleFormSubmit);
   }

@@ -5,17 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Praktikmål Tracker</title>
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./auth-ui.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <div id="auth-view" class="auth-container">
+      <div class="auth-card">
+        <h1>Praktikmål Tracker</h1>
+        <p>Log ind for at se dine praktikmål</p>
+
+        <div id="auth-error" class="auth-error"></div>
+
+        <form id="auth-form" class="auth-form">
+          <label class="field">
+            <span>Email</span>
+            <input
+              type="email"
+              id="auth-email"
+              name="email"
+              required
+              placeholder="din@email.dk"
+              autocomplete="email"
+            />
+          </label>
+
+          <label class="field">
+            <span>Adgangskode</span>
+            <input
+              type="password"
+              id="auth-password"
+              name="password"
+              required
+              placeholder="Min. 6 tegn"
+              minlength="6"
+              autocomplete="current-password"
+            />
+          </label>
+
+          <button type="submit" class="primary-button" id="auth-submit">
+            Log ind
+          </button>
+        </form>
+
+        <div class="auth-toggle">
+          <span id="auth-toggle-text">Har du ikke en konto?</span>
+          <button type="button" id="auth-toggle-btn">Opret konto</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-view" class="app-shell" style="display: none;">
       <header class="app-header">
         <div>
           <h1>Praktikmål Tracker</h1>
           <p>Hold overblik over mål, status og refleksioner.</p>
         </div>
-        <button id="toggle-help" class="ghost-button" type="button">
-          Vis hjælp
-        </button>
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div id="user-info" class="user-info">
+            <span class="user-info__email" id="user-email"></span>
+            <button id="logout-btn" class="ghost-button user-info__logout" type="button">
+              Log ud
+            </button>
+          </div>
+          <button id="toggle-help" class="ghost-button" type="button">
+            Vis hjælp
+          </button>
+        </div>
       </header>
 
       <section id="help-panel" class="panel panel--hidden">
@@ -28,7 +82,7 @@
             Skift status mellem rød, gul og grøn for at markere progression.
           </li>
           <li>Tilføj og opdater refleksioner løbende.</li>
-          <li>Alle data lagres lokalt i din browser.</li>
+          <li>Alle data gemmes sikkert i skyen og tilgængeligt fra alle dine enheder.</li>
         </ul>
       </section>
 
@@ -285,6 +339,6 @@
       </form>
     </dialog>
 
-    <script defer src="./app.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
