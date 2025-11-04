@@ -30,13 +30,45 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+.user-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
 .user-info-label {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 16px;
+}
+
+.delete-user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.delete-user-btn:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-user-btn svg {
+  flex-shrink: 0;
 }
 
 .user-info-details {
@@ -221,8 +253,19 @@
     padding: 20px;
   }
 
+  .user-info-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
   .user-info-label {
     font-size: 0.85rem;
+  }
+
+  .delete-user-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .user-info-row {
