@@ -135,12 +135,6 @@ function renderUsersOverview() {
         <div class="user-info-card">
           <div class="user-info-header">
             <div class="user-info-label">Bruger Information</div>
-            <button class="delete-user-btn" data-user-id="${user.id}" data-user-email="${escapeHtml(user.email)}" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-              </svg>
-              Slet bruger
-            </button>
           </div>
           <div class="user-info-details">
             <div class="user-info-row">
@@ -166,52 +160,6 @@ function renderUsersOverview() {
 
   elements.supervisorContent.innerHTML = usersHTML;
   attachGoalEventListeners();
-  attachDeleteUserListeners();
-}
-
-async function handleDeleteUser(userId, userEmail) {
-  const confirmed = confirm(
-    `Er du sikker på at du vil slette brugeren ${userEmail}?\n\n` +
-    'Dette vil permanent fjerne brugeren og alle deres mål fra databasen.\n\n' +
-    'Denne handling kan ikke fortrydes.'
-  );
-
-  if (!confirmed) return;
-
-  try {
-    const { data, error } = await supabase.rpc('delete_user_as_supervisor', {
-      target_user_id: userId
-    });
-
-    if (error) throw error;
-
-    if (data?.error) {
-      throw new Error(data.error);
-    }
-
-    const userSection = document.querySelector(`[data-user-id="${userId}"]`);
-    if (userSection) {
-      userSection.remove();
-    }
-
-    alert(`Brugeren ${userEmail} er blevet slettet.`);
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    alert('Der opstod en fejl ved sletning af brugeren. Prøv igen.');
-  }
-}
-
-function attachDeleteUserListeners() {
-  const deleteButtons = document.querySelectorAll('.delete-user-btn');
-
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const userId = button.dataset.userId;
-      const userEmail = button.dataset.userEmail;
-      handleDeleteUser(userId, userEmail);
-    });
-  });
 }
 
 function attachGoalEventListeners() {
