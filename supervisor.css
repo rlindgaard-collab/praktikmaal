@@ -34,52 +34,31 @@
   margin: 48px 0;
 }
 
-.user-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  transition: border-color 0.2s ease;
-}
-
-.user-card:hover {
-  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
-}
-
-.user-header {
+.user-section {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--color-border);
+  flex-direction: column;
   gap: 16px;
 }
 
-.user-info {
-  flex: 1;
-  min-width: 0;
+.user-info-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
 }
 
 .user-info h2 {
-  margin: 0 0 4px 0;
-  font-size: clamp(1.1rem, 0.5vw + 1rem, 1.3rem);
+  margin: 0 0 6px 0;
+  font-size: clamp(1.15rem, 0.5vw + 1.05rem, 1.35rem);
   color: var(--color-text);
   word-break: break-word;
+  font-weight: 600;
 }
 
-.user-email {
+.user-meta {
   color: var(--color-text-muted);
   font-size: clamp(0.85rem, 0.2vw + 0.8rem, 0.95rem);
-  word-break: break-word;
-}
-
-.goals-count {
-  color: var(--color-text-muted);
-  font-size: clamp(0.85rem, 0.2vw + 0.8rem, 0.95rem);
-  font-weight: 500;
-  white-space: nowrap;
-  flex-shrink: 0;
+  margin: 0;
 }
 
 .user-goals {
@@ -89,17 +68,17 @@
 }
 
 .goal-item {
-  background: color-mix(in srgb, var(--color-surface) 50%, transparent);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 16px;
+  border-radius: var(--radius-md);
+  padding: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .goal-item:hover {
   border-color: var(--color-accent);
-  background: var(--color-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .goal-item-header {
@@ -226,12 +205,6 @@
 }
 
 @media (max-width: 768px) {
-  .user-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
   .goal-item-header {
     flex-direction: column;
     gap: 8px;

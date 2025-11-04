@@ -131,13 +131,12 @@ function renderUsersOverview() {
     `).join('');
 
     return `
-      <div class="user-card">
-        <div class="user-header">
+      <div class="user-section">
+        <div class="user-info-card">
           <div class="user-info">
             <h2>${escapeHtml(user.email)}</h2>
-            <p class="user-email">Bruger ID: ${user.id.slice(0, 8)}...</p>
+            <p class="user-meta">Bruger ID: ${user.id.slice(0, 8)}... • ${user.goals.length} mål</p>
           </div>
-          <span class="goals-count">${user.goals.length} mål</span>
         </div>
         <div class="user-goals">
           ${goalsHTML || '<p class="no-goals-message">Ingen mål endnu</p>'}
