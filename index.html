@@ -249,9 +249,15 @@
 
         <div class="goal-body">
           <div class="status-selector" role="group" aria-label="Status">
-            <button type="button" data-status="red">Rød</button>
-            <button type="button" data-status="yellow">Gul</button>
-            <button type="button" data-status="green">Grøn</button>
+            <button type="button" class="status-circle" data-status="red" title="Rød">
+              <span class="visually-hidden">Rød</span>
+            </button>
+            <button type="button" class="status-circle" data-status="yellow" title="Gul">
+              <span class="visually-hidden">Gul</span>
+            </button>
+            <button type="button" class="status-circle" data-status="green" title="Grøn">
+              <span class="visually-hidden">Grøn</span>
+            </button>
           </div>
 
           <label class="field field--reflection">
