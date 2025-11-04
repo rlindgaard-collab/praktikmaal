@@ -283,6 +283,10 @@ async function handleAuthStateChange(event, session) {
   if (session?.user) {
     currentUser = session.user;
     elements.userEmail.textContent = currentUser.email;
+    // Clear any hash from URL (e.g., recovery tokens)
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
     showAppView();
     await loadAndRenderGoals();
   } else {
