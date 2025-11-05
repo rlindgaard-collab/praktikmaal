@@ -1,6 +1,14 @@
 import { signIn, signUp, signOut, onAuthStateChange, getCurrentUser, resetPassword, updatePassword, verifySupervisorCode, createSupervisorSession } from './auth.js';
 import { loadGoals, createGoal as createGoalDb, updateGoal as updateGoalDb, deleteGoal as deleteGoalDb } from './database.js';
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => console.log('SW registered:', registration.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+
 function getProgressColor(progress) {
   if (progress <= 25) return '#EF5350';
   if (progress <= 75) return '#FFCA28';
